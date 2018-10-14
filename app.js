@@ -114,8 +114,8 @@ var Start = function () {
 		0, 2, 3,
 
 		// Bottom
-		13, 12, 14,
-		14, 12, 15
+		5, 4, 6,
+		6, 4, 7
 	];
 	
 	var boxVerticesLR = [
