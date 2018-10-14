@@ -168,25 +168,6 @@ var Start = function () {
 
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
 	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
-	gl.vertexAttribPointer(
-		positionAttribLocation, // Attribute location
-		3, // Number of elements per attribute
-		gl.FLOAT, // Type of elements
-		gl.FALSE,
-		5 * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-		0 // Offset from the beginning of a single vertex to this attribute
-	);
-	gl.vertexAttribPointer(
-		texCoordAttribLocation, // Attribute location
-		2, // Number of elements per attribute
-		gl.FLOAT, // Type of elements
-		gl.FALSE,
-		5 * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-		3 * Float32Array.BYTES_PER_ELEMENT // Offset from the beginning of a single vertex to this attribute
-	);
-
-	gl.enableVertexAttribArray(positionAttribLocation);
-	gl.enableVertexAttribArray(texCoordAttribLocation);
 
 	//
 	// Create texture
@@ -237,6 +218,7 @@ var Start = function () {
 		gl.clearColor(0.75, 0.85, 0.8, 1.0);
 		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 		
+		//Front/Back
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesFB), gl.STATIC_DRAW);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesFB), gl.STATIC_DRAW);
 		gl.texImage2D(
@@ -244,9 +226,14 @@ var Start = function () {
 			gl.UNSIGNED_BYTE,
 			document.getElementById('brick-image')
 		);
+		gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.enableVertexAttribArray(positionAttribLocation);
+		gl.enableVertexAttribArray(texCoordAttribLocation);
 		gl.activeTexture(gl.TEXTURE0);
 		gl.drawElements(gl.TRIANGLES, boxIndicesFB.length, gl.UNSIGNED_SHORT, 0);
 		
+		//Left/Right
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesLR), gl.STATIC_DRAW);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesLR), gl.STATIC_DRAW);
 		gl.texImage2D(
@@ -254,9 +241,14 @@ var Start = function () {
 			gl.UNSIGNED_BYTE,
 			document.getElementById('brick1-image')
 		);
+		gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.enableVertexAttribArray(positionAttribLocation);
+		gl.enableVertexAttribArray(texCoordAttribLocation);
 		gl.activeTexture(gl.TEXTURE0);
 		gl.drawElements(gl.TRIANGLES, boxIndicesLR.length, gl.UNSIGNED_SHORT, 0);
 		
+		//Top/Bottom
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesTB), gl.STATIC_DRAW);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesTB), gl.STATIC_DRAW);
 		gl.texImage2D(
@@ -264,13 +256,19 @@ var Start = function () {
 			gl.UNSIGNED_BYTE,
 			document.getElementById('brick2-image')
 		);
+		gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+		gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+		gl.enableVertexAttribArray(positionAttribLocation);
+		gl.enableVertexAttribArray(texCoordAttribLocation);
 		gl.activeTexture(gl.TEXTURE0);
 		gl.drawElements(gl.TRIANGLES, boxIndicesTB.length, gl.UNSIGNED_SHORT, 0);
+
 	};
 	var loop = function () {
 		if (keys['ArrowUp']) {}
 		if (!keys[' ']) {
 			tick();
+			draw();
 		}
 		requestAnimationFrame(loop);
 	};
