@@ -166,6 +166,12 @@ var Start = function () {
 		4, 6, 7,
 	];
 
+	var boxVertexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
+	var boxIndexBufferObject = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
+
+	
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
 	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
 
