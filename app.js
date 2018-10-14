@@ -20,16 +20,15 @@ var vertexShaderText =
 '}'
 ].join('\n');
 
-var fragmentShaderText =
-[
+var fragmentShaderText = [
 'precision mediump float;',
-'',
+
 'varying vec2 fragTexCoord;',
-'uniform sampler2D sampler;',
-'',
-'void main()',
-'{',
-'  gl_FragColor = texture2D(sampler, fragTexCoord);',
+'uniform sampler2D brick;',
+'uniform sampler2D brick1',
+
+'void main() {',
+  'gl_FragColor = texture2D(sampler, fragTexCoord);',
 '}'
 ].join('\n');
 
@@ -194,7 +193,8 @@ var Start = function () {
 	//
 	// Create texture
 	//
-	var boxTexture = gl.createTexture();
+	const images = [document.getElementById('brick-image'), document.getElementById('brick1-image')];
+	const boxTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, boxTexture);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -203,7 +203,7 @@ var Start = function () {
 	gl.texImage2D(
 		gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
 		gl.UNSIGNED_BYTE,
-		document.getElementById('crate-image')
+		images[1]
 	);
 	gl.bindTexture(gl.TEXTURE_2D, null);
 
