@@ -260,7 +260,7 @@ var Start = function () {
 		gl.texImage2D(
 			gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
 			gl.UNSIGNED_BYTE,
-			document.getElementById('brick1-image')
+			document.getElementById('brick2-image')
 		);
 		gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
 		gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
