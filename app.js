@@ -1,3 +1,6 @@
+document.onkeydown = function(event) { keys[event.key] = true; };
+document.onkeyup = function(event) { keys[event.key] = false; };
+
 var vertexShaderText = 
 [
 'precision mediump float;',
@@ -231,6 +234,7 @@ var Start = function () {
 	mat4.identity(identityMatrix);
 	var angle = 0;
 	var loop = function () {
+		while(keys[' ']){}
 		angle = performance.now() / 1000 / 6 * 2 * Math.PI;
 		mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
 		mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
