@@ -92,7 +92,7 @@ var Start = function () {
 	//
 	// Create buffer
 	//
-	var boxVertices = 
+	var boxVerticesTB = 
 	[ // X, Y, Z           U, V
 		// Top
 		-1.0, 1.0, -1.0,   0, 0,
@@ -100,18 +100,6 @@ var Start = function () {
 		1.0, 1.0, 1.0,     1, 1,
 		1.0, 1.0, -1.0,    1, 0,
 		
-		// Front
-		1.0, 1.0, 1.0,     1, 1,
-		1.0, -1.0, 1.0,    1, 0,
-		-1.0, -1.0, 1.0,   0, 0,
-		-1.0, 1.0, 1.0,    0, 1,
-
-		// Back
-		1.0, 1.0, -1.0,     1, 1,
-		1.0, -1.0, -1.0,    1, 0,
-		-1.0, -1.0, -1.0,   0, 0,
-		-1.0, 1.0, -1.0,    0, 1,
-
 		// Bottom
 		-1.0, -1.0, -1.0,   0, 0,
 		-1.0, -1.0, 1.0,    0, 1,
@@ -119,19 +107,11 @@ var Start = function () {
 		1.0, -1.0, -1.0,    1, 0,
 	];
 
-	var boxIndices =
+	var boxIndicesTB =
 	[
 		// Top
 		0, 1, 2,
 		0, 2, 3,
-
-		// Front
-		5, 4, 6,
-		7, 6, 4,
-
-		// Back
-		8, 9, 10,
-		8, 10, 11,
 
 		// Bottom
 		13, 12, 14,
@@ -159,16 +139,32 @@ var Start = function () {
 
 		// Right
 		4, 5, 6,
+		4, 6, 7
+	];
+	
+	var boxVerticesFB = [
+		// Front
+		1.0, 1.0, 1.0,     1, 1,
+		1.0, -1.0, 1.0,    1, 0,
+		-1.0, -1.0, 1.0,   0, 0,
+		-1.0, 1.0, 1.0,    0, 1,
+
+		// Back
+		1.0, 1.0, -1.0,     1, 1,
+		1.0, -1.0, -1.0,    1, 0,
+		-1.0, -1.0, -1.0,   0, 0,
+		-1.0, 1.0, -1.0,    0, 1,
+	];
+	
+	var boxIndicesFB = [
+		// Front
+		1, 0, 2,
+		3, 2, 0,
+
+		// Back
+		4, 5, 6,
 		4, 6, 7,
 	];
-
-	var boxVertexBufferObject = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
-
-	var boxIndexBufferObject = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
 
 	var positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
 	var texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
@@ -201,12 +197,6 @@ var Start = function () {
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-	gl.texImage2D(
-		gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
-		gl.UNSIGNED_BYTE,
-		document.getElementById('brick-image')
-	);
-	gl.bindTexture(gl.TEXTURE_2D, null);
 
 	// Tell OpenGL state machine which program should be active.
 	gl.useProgram(program);
@@ -235,22 +225,52 @@ var Start = function () {
 	var identityMatrix = new Float32Array(16);
 	mat4.identity(identityMatrix);
 	var angle = 0;
+	var tick = function () {
+		angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+		mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+		mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+		mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+
+	};
+	var draw = function () {
+		gl.clearColor(0.75, 0.85, 0.8, 1.0);
+		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+		
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesFB), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesFB), gl.STATIC_DRAW);
+		gl.texImage2D(
+			gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			document.getElementById('brick-image')
+		);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.drawElements(gl.TRIANGLES, boxIndicesFB.length, gl.UNSIGNED_SHORT, 0);
+		
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesLR), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesLR), gl.STATIC_DRAW);
+		gl.texImage2D(
+			gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			document.getElementById('brick1-image')
+		);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.drawElements(gl.TRIANGLES, boxIndicesLR.length, gl.UNSIGNED_SHORT, 0);
+		
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVerticesTB), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndicesTB), gl.STATIC_DRAW);
+		gl.texImage2D(
+			gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			document.getElementById('brick2-image')
+		);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.drawElements(gl.TRIANGLES, boxIndicesTB.length, gl.UNSIGNED_SHORT, 0);
+	};
 	var loop = function () {
 		if (keys['ArrowUp']) {}
 		if (!keys[' ']) {
-			angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-			mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-			mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
-			mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-			gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-
-			gl.clearColor(0.75, 0.85, 0.8, 1.0);
-			gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-
-			gl.bindTexture(gl.TEXTURE_2D, boxTexture);
-			gl.activeTexture(gl.TEXTURE0);
-
-			gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+			tick();
 		}
 		requestAnimationFrame(loop);
 	};
