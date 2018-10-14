@@ -2,21 +2,19 @@ var keys = {};
 document.onkeydown = function(event) { keys[event.key] = true; };
 document.onkeyup = function(event) { console.log("KEYUP"); keys[event.key] = false; };
 
-var vertexShaderText = 
-[
+var vertexShaderText = [
 'precision mediump float;',
-'',
+
 'attribute vec3 vertPosition;',
 'attribute vec2 vertTexCoord;',
 'varying vec2 fragTexCoord;',
 'uniform mat4 mWorld;',
 'uniform mat4 mView;',
 'uniform mat4 mProj;',
-'',
-'void main()',
-'{',
-'  fragTexCoord = vertTexCoord;',
-'  gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);',
+
+'void main() {',
+  'fragTexCoord = vertTexCoord;',
+  'gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);',
 '}'
 ].join('\n');
 
@@ -25,7 +23,6 @@ var fragmentShaderText = [
 
 'varying vec2 fragTexCoord;',
 'uniform sampler2D brick;',
-'uniform sampler2D brick1',
 
 'void main() {',
   'gl_FragColor = texture2D(sampler, fragTexCoord);',
