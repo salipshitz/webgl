@@ -1,6 +1,6 @@
 var keys = {};
 document.onkeydown = function(event) { keys[event.key] = true; };
-document.onkeyup = function(event) { keys[event.key] = false; };
+document.onkeyup = function(event) { console.log("KEYUP"); keys[event.key] = false; };
 
 var vertexShaderText = 
 [
@@ -235,20 +235,21 @@ var Start = function () {
 	mat4.identity(identityMatrix);
 	var angle = 0;
 	var loop = function () {
-		while(keys[' ']){}
-		angle = performance.now() / 1000 / 6 * 2 * Math.PI;
-		mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-		mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
-		mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
-		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+		if (!keys[' ']) {
+			angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+			mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+			mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+			mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+			gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
-		gl.clearColor(0.75, 0.85, 0.8, 1.0);
-		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+			gl.clearColor(0.75, 0.85, 0.8, 1.0);
+			gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-		gl.bindTexture(gl.TEXTURE_2D, boxTexture);
-		gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, boxTexture);
+			gl.activeTexture(gl.TEXTURE0);
 
-		gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+			gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+		}
 
 		requestAnimationFrame(loop);
 	};
