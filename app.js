@@ -1,3 +1,4 @@
+var keys = {};
 document.onkeydown = function(event) { keys[event.key] = true; };
 document.onkeyup = function(event) { keys[event.key] = false; };
 
