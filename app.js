@@ -1,4 +1,5 @@
 var keys = {};
+var rotateSpeed = 0.5;
 document.onkeydown = function(event) { keys[event.key] = true; };
 document.onkeyup = function(event) { console.log("KEYUP"); keys[event.key] = false; };
 
@@ -17,7 +18,7 @@ var vertexShaderText = [
   'gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);',
 '}'
 ].join('\n');
-
+var viewMatrix;
 var fragmentShaderText = [
 'precision mediump float;',
 
@@ -106,21 +107,21 @@ var Start = function () {
 		-1.0, 1.0, -1.0,   0, 1,
 
 		// Right
-		1.0, 1.0, 1.0,    0, 0,
-		1.0, -1.0, 1.0,   1, 0,
-		1.0, -1.0, -1.0,  1, 1,
-		1.0, 1.0, -1.0,   0, 1,
+		1.0, 1.0, 1.0,     0, 0,
+		1.0, -1.0, 1.0,    1, 0,
+		1.0, -1.0, -1.0,   1, 1,
+		1.0, 1.0, -1.0,    0, 1,
 
 		// Front
-		1.0, 1.0, 1.0,    1, 1,
+		1.0, 1.0, 1.0,     1, 1,
 		1.0, -1.0, 1.0,    1, 0,
-		-1.0, -1.0, 1.0,    0, 0,
+		-1.0, -1.0, 1.0,   0, 0,
 		-1.0, 1.0, 1.0,    0, 1,
 
 		// Back
-		1.0, 1.0, -1.0,    0, 0,
+		1.0, 1.0, -1.0,     0, 0,
 		1.0, -1.0, -1.0,    0, 1,
-		-1.0, -1.0, -1.0,    1, 1,
+		-1.0, -1.0, -1.0,   1, 1,
 		-1.0, 1.0, -1.0,    1, 0,
 
 		// Bottom
@@ -211,7 +212,7 @@ var Start = function () {
 	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
 
 	var worldMatrix = new Float32Array(16);
-	var viewMatrix = new Float32Array(16);
+	viewMatrix = new Float32Array(16);
 	var projMatrix = new Float32Array(16);
 	mat4.identity(worldMatrix);
 	mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
@@ -231,6 +232,7 @@ var Start = function () {
 	mat4.identity(identityMatrix);
 	var angle = 0;
 	var loop = function () {
+		if (keys['ArrowUp']) {}
 		if (!keys[' ']) {
 			angle = performance.now() / 1000 / 6 * 2 * Math.PI;
 			mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
@@ -246,7 +248,6 @@ var Start = function () {
 
 			gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
 		}
-
 		requestAnimationFrame(loop);
 	};
 	requestAnimationFrame(loop);
